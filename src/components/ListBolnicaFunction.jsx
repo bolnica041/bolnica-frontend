@@ -1,36 +1,27 @@
-import React, { Component } from 'react';
+import React, { useState,useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import BolnicaService from '../services/BolnicaService';
-import {useNavigate} from 'react-router-dom';
 
 
-class ListBolnicaComponent extends Component {
+function ListBolnicaFunction() {
 
-    constructor(props) {
-        super(props)
-        this.state = {
-            bolnice: []
-        
-        }
-        
-        this.createBolnica = this.createBolnica.bind(this);
-    }
+    let [bolnice, setBolnice] = useState([]);
+    let navigate = useNavigate();
 
-    componentDidMount(){
-        BolnicaService.getBolnica().then((res) => {
-            this.setState({bolnice: res.data})
-        });
-    }
-
-    createBolnica(){
-        this.props.history.push('/createBolnica');
-    }
+    useEffect(() => {
+        BolnicaService.getBolnica()
+             .then((response) => {
+              setBolnice(response.data);
+            });
+      }, []);
 
 
-    render() {
-        return (
-            <div>
+
+    return (
+        <div>
                 <h2 className="text-center">Lista Bolnica
                 </h2>
+                    <button className='btn btn-primary' onClick={()=>navigate("/createBolnica")}>Add Bolnica</button>
                 <div className='row'>
                     <table className='table table-striped table-bordered'>
                         <thead>
@@ -43,7 +34,7 @@ class ListBolnicaComponent extends Component {
 
                         <tbody>
                             {
-                                this.state.bolnice.map(
+                                bolnice.map(
                                     bolnica =>
                                         <tr key={bolnica.id}>
                                             <td>{bolnica.naziv}</td>
@@ -55,9 +46,8 @@ class ListBolnicaComponent extends Component {
                         </tbody>
                     </table>
                 </div>
-            </div>
-        );
-    }
+        </div>
+    );
 }
 
-export default ListBolnicaComponent;
+export default ListBolnicaFunction;
